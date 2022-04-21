@@ -29,6 +29,7 @@ function draw() {
   celestialObj('white', 30) // White Moon
   push()
   fill('pink')
+  rotate(radians(-2 * speed))
   translate(30, 0)
   ellipse(0, 0, 10)
   pop()
