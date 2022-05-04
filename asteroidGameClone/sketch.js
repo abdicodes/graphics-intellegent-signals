@@ -23,10 +23,8 @@ function setup() {
 function draw() {
   background(0)
   sky()
-
   spaceship.run()
   asteroids.run()
-
   drawEarth()
 
   checkCollisions(spaceship, asteroids) // function that checks collision between various elements
@@ -49,10 +47,38 @@ function drawEarth() {
 function checkCollisions(spaceship, asteroids) {
   //spaceship-2-asteroid collisions
   //YOUR CODE HERE (2-3 lines approx)
+  for (let i = 0; i < asteroids.diams.length; i++) {
+    if (
+      isInside(
+        spaceship.location,
+        spaceship.size,
+        asteroids.locations[i],
+        asteroids.diams[i]
+      )
+    ) {
+      gameOver()
+    }
+  }
   //asteroid-2-earth collisions
   //YOUR CODE HERE (2-3 lines approx)
+
+  if (isInside(spaceship.location, spaceship.size, earthLoc, earthSize.x)) {
+    gameOver()
+  }
+
   //spaceship-2-earth
   //YOUR CODE HERE (1-2 lines approx)
+  if (
+    isInside(
+      spaceship.location,
+      spaceship.size,
+      atmosphereLoc,
+      atmosphereSize.x
+    )
+  ) {
+    gameOver()
+  }
+
   //spaceship-2-atmosphere
   //YOUR CODE HERE (1-2 lines approx)
   //bullet collisions
@@ -63,7 +89,10 @@ function checkCollisions(spaceship, asteroids) {
 //helper function checking if there's collision between object A and object B
 function isInside(locA, sizeA, locB, sizeB) {
   // YOUR CODE HERE (3-5 lines approx)
-  dist(locA.x, locA, y, locB.x, locB.y) <= sizeA + sizeB ? true : false
+  console.log()
+  if (dist(locA.x, locA.y, locB.x, locB.y) < sizeB / 2 + sizeA / 2) {
+    return true
+  }
 }
 
 //////////////////////////////////////////////////

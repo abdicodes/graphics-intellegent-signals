@@ -21,8 +21,10 @@ class Spaceship {
     triangle(
       this.location.x - this.size / 2,
       this.location.y + this.size / 2,
+
       this.location.x + this.size / 2,
       this.location.y + this.size / 2,
+
       this.location.x,
       this.location.y - this.size / 2
     )
