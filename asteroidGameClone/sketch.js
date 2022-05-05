@@ -61,9 +61,17 @@ function checkCollisions(spaceship, asteroids) {
   }
   //asteroid-2-earth collisions
   //YOUR CODE HERE (2-3 lines approx)
-
-  if (isInside(spaceship.location, spaceship.size, earthLoc, earthSize.x)) {
-    gameOver()
+  for (let i = 0; i < asteroids.diams.length; i++) {
+    if (
+      isInside(
+        earthLoc,
+        earthSize.x,
+        asteroids.locations[i],
+        asteroids.diams[i]
+      )
+    ) {
+      gameOver()
+    }
   }
 
   //spaceship-2-earth
@@ -76,21 +84,57 @@ function checkCollisions(spaceship, asteroids) {
       atmosphereSize.x
     )
   ) {
-    gameOver()
+    spaceship.setNearEarth()
   }
 
   //spaceship-2-atmosphere
   //YOUR CODE HERE (1-2 lines approx)
+  if (isInside(spaceship.location, spaceship.size, earthLoc, earthSize.x)) {
+    gameOver()
+  }
+
   //bullet collisions
   //YOUR CODE HERE (3-4 lines approx)
+
+  for (var i = 0; i < asteroids.diams.length; i++) {
+    spaceship.bulletSys.bullets.forEach((bullet) =>
+      isInside(
+        bullet,
+        spaceship.bulletSys.diam,
+        asteroids.locations[i],
+        asteroids.diams[i]
+      )
+        ? asteroids.destroy(i)
+        : null
+    )
+    console.log(asteroids)
+    // for (var j = 0; j < spaceship.bulletSys.bullets; j++) {
+    //   if (
+    //     isInside(
+    //       spaceship.bulletSys.bullets[j],
+    //       spaceship.bulletSys.diam,
+    //       asteroids.locations[i],
+    //       asteroids.diams[i]
+    //     )
+    //   ) {
+    // asteroids.destroy(i)
+    // }
+    // console.log(
+    //   spaceship.bulletSys.bullets[j]
+    // ,
+    // spaceship.bulletSys.diam,
+    // asteroids.locations[i],
+    // asteroids.diams[i]
+    // )
+    // }
+  }
 }
 
 //////////////////////////////////////////////////
 //helper function checking if there's collision between object A and object B
 function isInside(locA, sizeA, locB, sizeB) {
   // YOUR CODE HERE (3-5 lines approx)
-  console.log()
-  if (dist(locA.x, locA.y, locB.x, locB.y) < sizeB / 2 + sizeA / 2) {
+  if (dist(locA.x, locA.y, locB?.x, locB?.y) < sizeB / 2 + sizeA / 2) {
     return true
   }
 }

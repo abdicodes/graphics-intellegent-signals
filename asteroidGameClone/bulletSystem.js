@@ -33,7 +33,7 @@ class BulletSystem {
   //check if bullets leave the screen and remove them from the array
   edges() {
     this.bullets.forEach((bullet, index) =>
-      bullet.y < 0 ? this.bullets.splice(index + 1, 1) : null
+      bullet.y < 0 ? this.bullets.splice(index, 1) : null
     )
     // YOUR CODE HERE (3 lines approx)
   }
