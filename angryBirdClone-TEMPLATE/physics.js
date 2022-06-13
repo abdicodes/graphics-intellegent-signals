@@ -49,18 +49,39 @@ function setupBird() {
 function drawBirds() {
   push()
   //your code here
+  birds.forEach((bird) => drawVertices(bird.vertices))
   pop()
+  for (i = 0; i < birds.length; i++) {
+    if (isOffScreen(birds[i])) {
+      removeFromWorld(birds[i])
+      birds.splice(i, 1)
+      i--
+    }
+  }
 }
 ////////////////////////////////////////////////////////////////
 //creates a tower of boxes
 function setupTower() {
   //you code here
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 6; j++) {
+      var box = Bodies.rectangle(width / 2 + i * 80, 100 + 80 * j, 80, 80)
+      boxes.push(box)
+      World.add(engine.world, [box])
+      colors.push(round(random(60, 200)))
+    }
+  }
 }
 ////////////////////////////////////////////////////////////////
 //draws tower of boxes
 function drawTower() {
   push()
   //your code here
+
+  for (i = 0; i < boxes.length; i++) {
+    fill(0, colors[i], 0)
+    drawVertices(boxes[i].vertices)
+  }
   pop()
 }
 ////////////////////////////////////////////////////////////////
