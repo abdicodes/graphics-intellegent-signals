@@ -87,11 +87,27 @@ function drawTower() {
 ////////////////////////////////////////////////////////////////
 function setupSlingshot() {
   //your code here
+  slingshotBird = Bodies.circle(200, 200, 20, {
+    friction: 0,
+    restitution: 0.95,
+  })
+  Matter.Body.setMass(slingshotBird, slingshotBird.mass * 10)
+
+  slingshotConstraint = Constraint.create({
+    pointA: { x: 200, y: 200 },
+    bodyB: slingshotBird,
+    pointB: { x: 0, y: 0 },
+    stiffness: 0.01,
+    damping: 0.0001,
+  })
+  World.add(engine.world, [slingshotBird, slingshotConstraint])
 }
 ////////////////////////////////////////////////////////////////
 //draws slingshot bird and its constraint
 function drawSlingshot() {
   push()
+  drawVertices(slingshotBird.vertices)
+  drawConstraint(slingshotConstraint)
   // your code here
   pop()
 }
