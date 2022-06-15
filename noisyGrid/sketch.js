@@ -21,7 +21,6 @@ function colorGrid() {
     for (j = 0; j < 25; j++) {
       let mouse_pos = map(mouseX, 0, width, 0, 100)
       let speed = (frameCount * mouse_pos) / 1000
-
       let n = noise(i / 50, j / 50, speed)
       let interCol = lerpColor(green, red, n)
       fill(interCol)
@@ -38,7 +37,9 @@ function compassGrid() {
     for (j = 0; j < 25; j++) {
       push()
       translate(stepSize / 2, 0)
-      let n = noise(i / 50, j / 50, frameCount / 500)
+      let mouse_pos = map(mouseX, 0, width, 0, 100)
+      let speed = (frameCount * mouse_pos) / 10000
+      let n = noise(i / 50, j / 50, speed)
       let c = map(n, 0, 1, 0, 720)
 
       push()
