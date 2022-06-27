@@ -64,5 +64,6 @@ class AsteroidSystem {
     this.velocities.splice(index,1);
     this.accelerations.splice(index,1);
     this.diams.splice(index,1);
+    score +=1 
   }
 }

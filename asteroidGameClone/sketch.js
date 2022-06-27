@@ -5,6 +5,7 @@ var atmosphereSize
 var earthLoc
 var earthSize
 var starLocs = []
+var score = 0
 
 //////////////////////////////////////////////////
 function setup() {
@@ -26,6 +27,7 @@ function draw() {
   spaceship.run()
   asteroids.run()
   drawEarth()
+  myScore()
 
   checkCollisions(spaceship, asteroids) // function that checks collision between various elements
 }
@@ -170,5 +172,13 @@ function sky() {
   }
 
   if (random(1) < 0.3) starLocs.splice(int(random(starLocs.length)), 1)
+  pop()
+}
+
+function myScore() {
+  push()
+  fill(255)
+  textSize(32)
+  text(`Score: ${score}`, 10, 60)
   pop()
 }
