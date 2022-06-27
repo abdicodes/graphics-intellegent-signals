@@ -81,6 +81,10 @@ function drawTower() {
   for (i = 0; i < boxes.length; i++) {
     fill(0, colors[i], 0)
     drawVertices(boxes[i].vertices)
+    if (isOffScreen(boxes[i])) {
+      boxes.splice(i, 1)
+      i--
+    }
   }
   pop()
 }

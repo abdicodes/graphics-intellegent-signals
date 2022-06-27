@@ -20,6 +20,7 @@ var slingshotBird, slingshotConstraint
 var angle = 0
 var angleSpeed = 0
 var canvas
+var itsOver = false
 ////////////////////////////////////////////////////////////
 function setup() {
   canvas = createCanvas(1000, 600)
@@ -35,6 +36,16 @@ function setup() {
   setupSlingshot()
 
   setupMouseInteraction()
+
+  // a timeout function that will check the following requirements after
+  // 60 seconds
+  setTimeout(() => {
+    if (boxes.length > 0) {
+      itsOver = true
+      console.log(boxes.length)
+    }
+  }, 60000)
+  console.log(boxes)
 }
 ////////////////////////////////////////////////////////////
 function draw() {
@@ -51,6 +62,8 @@ function draw() {
   drawBirds()
 
   drawSlingshot()
+  drawSeconds()
+  gameOver()
 }
 ////////////////////////////////////////////////////////////
 //use arrow keys to control propeller
@@ -130,5 +143,27 @@ function drawConstraint(constraint) {
     posB.x + offsetB.x,
     posB.y + offsetB.y
   )
+  pop()
+}
+
+// borrowed from the astreoids game
+function gameOver() {
+  if (itsOver) {
+    push()
+    fill(255)
+    textSize(80)
+    textAlign(CENTER)
+    text('GAME OVER!', width / 2, height / 2)
+    pop()
+    noLoop()
+  }
+}
+
+function drawSeconds() {
+  let timer = millis()
+  push()
+  fill(255)
+  textSize(32)
+  text(`Time: ${round(timer / 1000)}`, 10, 60)
   pop()
 }
