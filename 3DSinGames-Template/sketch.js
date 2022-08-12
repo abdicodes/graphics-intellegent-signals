@@ -7,6 +7,9 @@ function draw() {
   angleMode(DEGREES);
   camera(800, -600, 800, 0, 0, 0, 0, 1, 0);
   fill(255);
+  normalMaterial();
+  stroke(0);
+  strokeWeight(2);
   for (var i = -400; i < 400; i += 50) {
     for (var j = -400; j < 400; j += 50) {
       push();
