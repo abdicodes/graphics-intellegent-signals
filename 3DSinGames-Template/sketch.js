@@ -14,7 +14,9 @@ function draw() {
     for (var j = -400; j < 400; j += 50) {
       push();
       translate(i, 0, j);
-      box(50, 50, 50);
+      let distance = dist(0, 0, 0, i, 0, j);
+      let length = map(sin(distance + frameCount), -1, 1, 100, 300);
+      box(50, length, 50);
       pop();
     }
   }
