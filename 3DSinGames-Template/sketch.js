@@ -1,16 +1,27 @@
 var confLocs = [];
 var confTheta = [];
 function setup() {
+  angleMode(DEGREES);
   createCanvas(900, 800, WEBGL);
+  for (let i = 0; i < 200; i++) {
+    let vec3d = new p5.Vector(
+      random(-500, 500),
+      random(-800, 0),
+      random(-500, 500)
+    );
+    confLocs.push(vec3d);
+    confTheta.push(random(0, 360));
+  }
+  console.log(confLocs);
+  console.log(confTheta);
 }
 
 function draw() {
   background(125);
-  angleMode(DEGREES);
+
   let xLoc = cos(frameCount) * height;
   let zLoc = sin(frameCount) * height;
 
-  //   camera(800, -600, 800, 0, 0, 0, 0, 1, 0);
   camera(xLoc, -600, zLoc, 0, 0, 0, 0, 1, 0);
 
   fill(255);
@@ -27,4 +38,16 @@ function draw() {
       pop();
     }
   }
+  confetti();
 }
+
+const confetti = () => {
+  confLocs.forEach((loc, i) => {
+    push();
+    translate(loc.x, loc.y, loc.z);
+    noStroke();
+    rotateX(confTheta[i]);
+    plane(15, 15);
+    pop();
+  });
+};
