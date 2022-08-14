@@ -3,16 +3,20 @@ var avgImg;
 var numOfImages = 30;
 
 //////////////////////////////////////////////////////////
-function preload() { // preload() runs once
-
+function preload() {
+  // preload() runs once
+  for (var i = 0; i < numOfImages; i++) {
+    const img = loadImage(`./assets/${i}.jpg`);
+    imgs.push(img);
+  }
 }
 //////////////////////////////////////////////////////////
 function setup() {
-    createCanvas(100, 100);
-    pixelDensity(1);
+  createCanvas(imgs[0].width * 2, imgs[0].height);
+  pixelDensity(1);
 }
 //////////////////////////////////////////////////////////
 function draw() {
-    background(125);
-
+  background(125);
+  image(imgs[0], 0, 0);
 }
