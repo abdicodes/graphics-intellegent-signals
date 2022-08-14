@@ -48,6 +48,9 @@ const confetti = () => {
     noStroke();
     rotateX(confTheta[i]);
     plane(15, 15);
+    confTheta[i] += 10;
+    loc.y += 1;
+    loc.y >= 0 ? (loc.y = -800) : null;
     pop();
   });
 };
