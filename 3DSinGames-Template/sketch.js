@@ -1,3 +1,5 @@
+var confLocs = [];
+var confTheta = [];
 function setup() {
   createCanvas(900, 800, WEBGL);
 }
@@ -5,7 +7,12 @@ function setup() {
 function draw() {
   background(125);
   angleMode(DEGREES);
-  camera(800, -600, 800, 0, 0, 0, 0, 1, 0);
+  let xLoc = cos(frameCount) * height;
+  let zLoc = sin(frameCount) * height;
+
+  //   camera(800, -600, 800, 0, 0, 0, 0, 1, 0);
+  camera(xLoc, -600, zLoc, 0, 0, 0, 0, 1, 0);
+
   fill(255);
   normalMaterial();
   stroke(0);
