@@ -9,6 +9,7 @@ function preload() {
     const img = loadImage(`./assets/${i}.jpg`);
     imgs.push(img);
   }
+  avgImg = createGraphics(imgs[0].width, imgs[0].height);
 }
 //////////////////////////////////////////////////////////
 function setup() {
@@ -19,4 +20,7 @@ function setup() {
 function draw() {
   background(125);
   image(imgs[0], 0, 0);
+
+  avgImg.loadPixels();
+  imgs.forEach((img) => img.loadPixels());
 }
