@@ -23,4 +23,12 @@ function draw() {
 
   avgImg.loadPixels();
   imgs.forEach((img) => img.loadPixels());
+  console.log(imgs);
+
+  for (var i = 0; i < height; i++) {
+    for (var j = 0; j < width; j++) {
+      avgImg.pixels[(width * i + j) * 4] = 100;
+    }
+  }
+  noLoop();
 }
