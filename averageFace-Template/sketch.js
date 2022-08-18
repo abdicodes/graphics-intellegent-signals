@@ -27,11 +27,26 @@ function draw() {
 
   for (let i = 0; i < avgImg.height; i++) {
     for (let j = 0; j < imgs[0].width; j++) {
-      avgImg.pixels[(avgImg.width * i + j) * 4] = 255;
+      let sumR = (sumG = sumB = 0);
+      for (let k = 0; k < imgs.length; k++) {
+        sumR += imgs[k].pixels[(imgs[k].width * i + j) * 4];
+        sumG += imgs[k].pixels[(imgs[k].width * i + j) * 4 + 1];
+        sumB += imgs[k].pixels[(imgs[k].width * i + j) * 4 + 2];
+        // console.log(
+        //   imgs[k].pixels[(imgs[k].width * i + j) * 4],
+        //   imgs[k].pixels[(imgs[k].width * i + j) * 4 + 1],
+        //   imgs[k].pixels[(imgs[k].width * i + j) * 4 + 2]
+        // );
+      }
+      avgImg.pixels[(avgImg.width * i + j) * 4] = sumR / imgs.length;
+      avgImg.pixels[(avgImg.width * i + j) * 4 + 1] = sumG / imgs.length;
+      avgImg.pixels[(avgImg.width * i + j) * 4 + 2] = sumB / imgs.length;
       avgImg.pixels[(avgImg.width * i + j) * 4 + 3] = 255;
     }
+    // console.log(sumR, sumG, sumB);
   }
   avgImg.updatePixels();
+  console.log(avgImg.pixels);
   image(avgImg, imgs[0].width, 0);
   noLoop();
 }
