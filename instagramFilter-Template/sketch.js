@@ -67,7 +67,7 @@ const sepiaFilter = (img) => {
 };
 
 const darkCorners = (img) => {
-  let test = new Set();
+  const maxDist = dist(0, 0, img.width / 2, img.height / 2);
   const resultImg = createImage(img.width, img.height);
   img.loadPixels();
 
@@ -75,8 +75,8 @@ const darkCorners = (img) => {
   for (let i = 0; i < img.width; i++) {
     for (let j = 0; j < img.height; j++) {
       let index = (j * img.width + i) * 4;
-      let pixelDist, dynLum, maxDist;
-      maxDist = dist(0, 0, img.width / 2, img.height / 2);
+      let pixelDist, dynLum;
+
       pixelDist = dist(img.width / 2, img.height / 2, i, j);
 
       if (pixelDist >= 450) {
