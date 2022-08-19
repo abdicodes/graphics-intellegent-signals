@@ -32,18 +32,12 @@ function draw() {
         sumR += imgs[k].pixels[(imgs[k].width * i + j) * 4];
         sumG += imgs[k].pixels[(imgs[k].width * i + j) * 4 + 1];
         sumB += imgs[k].pixels[(imgs[k].width * i + j) * 4 + 2];
-        // console.log(
-        //   imgs[k].pixels[(imgs[k].width * i + j) * 4],
-        //   imgs[k].pixels[(imgs[k].width * i + j) * 4 + 1],
-        //   imgs[k].pixels[(imgs[k].width * i + j) * 4 + 2]
-        // );
       }
       avgImg.pixels[(avgImg.width * i + j) * 4] = sumR / imgs.length;
       avgImg.pixels[(avgImg.width * i + j) * 4 + 1] = sumG / imgs.length;
       avgImg.pixels[(avgImg.width * i + j) * 4 + 2] = sumB / imgs.length;
       avgImg.pixels[(avgImg.width * i + j) * 4 + 3] = 255;
     }
-    // console.log(sumR, sumG, sumB);
   }
   avgImg.updatePixels();
   console.log(avgImg.pixels);
