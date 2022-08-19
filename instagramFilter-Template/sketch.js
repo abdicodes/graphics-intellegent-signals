@@ -35,7 +35,7 @@ function mousePressed() {
 function earlyBirdFilter(img) {
   var resultImg = createImage(imgIn.width, imgIn.height);
   resultImg = sepiaFilter(imgIn);
-  // resultImg = darkCorners(resultImg);
+  resultImg = darkCorners(resultImg);
   // resultImg = radialBlurFilter(resultImg);
   // resultImg = borderFilter(resultImg)
   return resultImg;
@@ -59,6 +59,38 @@ const sepiaFilter = (img) => {
       resultImg.pixels[index] = newRed;
       resultImg.pixels[index + 1] = newGreen;
       resultImg.pixels[index + 2] = newBlue;
+      resultImg.pixels[index + 3] = 255;
+    }
+  }
+  resultImg.updatePixels();
+  return resultImg;
+};
+
+const darkCorners = (img) => {
+  let test = new Set();
+  const resultImg = createImage(img.width, img.height);
+  img.loadPixels();
+
+  resultImg.loadPixels();
+  for (let i = 0; i < img.width; i++) {
+    for (let j = 0; j < img.height; j++) {
+      let index = (j * img.width + i) * 4;
+      let pixelDist, dynLum, maxDist;
+      maxDist = dist(0, 0, img.width / 2, img.height / 2);
+      pixelDist = dist(img.width / 2, img.height / 2, i, j);
+
+      if (pixelDist >= 450) {
+        dynLum = map(pixelDist, maxDist, 450, 0, 0.4);
+        dynLum = constrain(dynLum, 0, 0.4);
+      } else if (pixelDist < 450 && pixelDist > 300) {
+        dynLum = map(pixelDist, 450, 300, 0.4, 1);
+        dynLum = constrain(dynLum, 0.4, 1);
+      } else {
+        dynLum = 1;
+      }
+      resultImg.pixels[index] = img.pixels[index] * dynLum;
+      resultImg.pixels[index + 1] = img.pixels[index + 1] * dynLum;
+      resultImg.pixels[index + 2] = img.pixels[index + 2] * dynLum;
       resultImg.pixels[index + 3] = 255;
     }
   }
