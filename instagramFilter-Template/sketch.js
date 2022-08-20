@@ -97,3 +97,24 @@ const darkCorners = (img) => {
   resultImg.updatePixels();
   return resultImg;
 };
+
+const convolution = (x, y, matrix, img) => {
+  const totalRed = 0;
+  const totalGreen = 0;
+  const totalBlue = 0;
+  const offset = floor(matrix.length / 2);
+
+  for (let i = 0; i < matrix.length; i++) {
+    for (let j = 0; j < matrix.length; j++) {
+      let xLoc = x + i - offset;
+      let yLoc = y + j - offset;
+      let index = (img.width * yLoc + xLoc) * 4;
+      index = constrain(index, 0, img.pixels.length - 1);
+
+      totalRed = img.pixels[index] * matrix[i][j];
+      totalGreen = img.pixels[index + 1] * matrix[i][j];
+      totalBlue = img.pixels[index + 2] * matrix[i][j];
+    }
+  }
+  return [totalRed, totalGreen, totalBlue];
+};
