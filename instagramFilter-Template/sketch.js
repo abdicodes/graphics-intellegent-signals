@@ -45,15 +45,30 @@ const radialBlurFilter = (img) => {
   const resultImg = createImage(img.width, img.height);
   img.loadPixels();
   resultImg.loadPixels();
-
   for (let i = 0; i < img.width; i++) {
     for (let j = 0; j < img.height; j++) {
+      let r, g, b, dynBlur;
       let index = (j * img.width + i) * 4;
       let c = convolution(i, j, matrix, img);
+      r = img.pixels[index];
+      g = img.pixels[index + 1];
+      b = img.pixels[index + 2];
 
-      resultImg.pixels[index] = c[0];
-      resultImg.pixels[index + 1] = c[1];
-      resultImg.pixels[index + 2] = c[2];
+      let distance = dist(mouseX, mouseY, i, j);
+      if (distance <= 100) {
+        dynBlur = 0;
+      }
+      if (distance > 100 && distance < 300) {
+        dynBlur = map(distance, 100, 300, 0, 1);
+        dynBlur = constrain(dynBlur, 0, 1);
+      }
+      if (distance >= 300) {
+        dynBlur = 1;
+      }
+
+      resultImg.pixels[index] = c[0] * dynBlur + r * (1 - dynBlur);
+      resultImg.pixels[index + 1] = c[1] * dynBlur + g * (1 - dynBlur);
+      resultImg.pixels[index + 2] = c[2] * dynBlur + b * (1 - dynBlur);
       resultImg.pixels[index + 3] = 255;
     }
   }
