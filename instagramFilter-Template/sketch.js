@@ -37,25 +37,28 @@ function earlyBirdFilter(img) {
   resultImg = sepiaFilter(imgIn);
   resultImg = darkCorners(resultImg);
   resultImg = radialBlurFilter(resultImg);
-  // resultImg = borderFilter(resultImg)
+  resultImg = borderFilter(resultImg);
   return resultImg;
 }
 
-const borderFilter = () => {
-  const resultImg = createImage(img.width, img.height);
-  img.loadPixels();
-  resultImg.loadPixels();
+const borderFilter = (img) => {
+  const buffer = createGraphics(img.width, img.height);
+  buffer.image(img, 0, 0, img.width, img.height);
 
-  for (let i = 0; i < img.width; i++) {
-    for (let j = 0; j < img.height; j++) {
-      let r, g, b, dynBlur;
-      let index = (j * img.width + i) * 4;
-      let c = convolution(i, j, matrix, img);
-      resultImg.pixels[index] = img.pixels[index];
-      resultImg.pixels[index + 1] = img.pixels[index + 1];
-      resultImg.pixels[index + 2] = img.pixels[index + 2];
-    }
-  }
+  buffer.push();
+  buffer.stroke(255);
+  buffer.strokeWeight(20);
+  buffer.fill(255, 255, 255, 0);
+  buffer.rect(10, 10, buffer.width - 20, buffer.height - 20, 30);
+  buffer.pop();
+
+  buffer.push();
+  buffer.stroke(255);
+  buffer.strokeWeight(20);
+  buffer.fill(255, 255, 255, 0);
+  buffer.rect(10, 10, buffer.width - 20, buffer.height - 20);
+  buffer.pop();
+  return buffer;
 };
 
 const radialBlurFilter = (img) => {
