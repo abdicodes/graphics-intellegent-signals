@@ -41,6 +41,23 @@ function earlyBirdFilter(img) {
   return resultImg;
 }
 
+const borderFilter = () => {
+  const resultImg = createImage(img.width, img.height);
+  img.loadPixels();
+  resultImg.loadPixels();
+
+  for (let i = 0; i < img.width; i++) {
+    for (let j = 0; j < img.height; j++) {
+      let r, g, b, dynBlur;
+      let index = (j * img.width + i) * 4;
+      let c = convolution(i, j, matrix, img);
+      resultImg.pixels[index] = img.pixels[index];
+      resultImg.pixels[index + 1] = img.pixels[index + 1];
+      resultImg.pixels[index + 2] = img.pixels[index + 2];
+    }
+  }
+};
+
 const radialBlurFilter = (img) => {
   const resultImg = createImage(img.width, img.height);
   img.loadPixels();
