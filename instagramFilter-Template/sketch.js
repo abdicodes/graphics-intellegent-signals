@@ -36,10 +36,31 @@ function earlyBirdFilter(img) {
   var resultImg = createImage(imgIn.width, imgIn.height);
   resultImg = sepiaFilter(imgIn);
   resultImg = darkCorners(resultImg);
-  // resultImg = radialBlurFilter(resultImg);
+  resultImg = radialBlurFilter(resultImg);
   // resultImg = borderFilter(resultImg)
   return resultImg;
 }
+
+const radialBlurFilter = (img) => {
+  const resultImg = createImage(img.width, img.height);
+  img.loadPixels();
+  resultImg.loadPixels();
+
+  for (let i = 0; i < img.width; i++) {
+    for (let j = 0; j < img.height; j++) {
+      let index = (j * img.width + i) * 4;
+      let c = convolution(i, j, matrix, img);
+
+      resultImg.pixels[index] = c[0];
+      resultImg.pixels[index + 1] = c[1];
+      resultImg.pixels[index + 2] = c[2];
+      resultImg.pixels[index + 3] = 255;
+    }
+  }
+
+  resultImg.updatePixels();
+  return resultImg;
+};
 
 const sepiaFilter = (img) => {
   const resultImg = createImage(img.width, img.height);
@@ -99,9 +120,9 @@ const darkCorners = (img) => {
 };
 
 const convolution = (x, y, matrix, img) => {
-  const totalRed = 0;
-  const totalGreen = 0;
-  const totalBlue = 0;
+  let totalRed = 0;
+  let totalGreen = 0;
+  let totalBlue = 0;
   const offset = floor(matrix.length / 2);
 
   for (let i = 0; i < matrix.length; i++) {
@@ -111,10 +132,11 @@ const convolution = (x, y, matrix, img) => {
       let index = (img.width * yLoc + xLoc) * 4;
       index = constrain(index, 0, img.pixels.length - 1);
 
-      totalRed = img.pixels[index] * matrix[i][j];
-      totalGreen = img.pixels[index + 1] * matrix[i][j];
-      totalBlue = img.pixels[index + 2] * matrix[i][j];
+      totalRed += img.pixels[index] * matrix[i][j];
+      totalGreen += img.pixels[index + 1] * matrix[i][j];
+      totalBlue += img.pixels[index + 2] * matrix[i][j];
     }
   }
+  // console.log(totalRed, totalBlue, totalGreen);
   return [totalRed, totalGreen, totalBlue];
 };
