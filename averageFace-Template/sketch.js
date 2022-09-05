@@ -1,7 +1,7 @@
 var imgs = [];
 var avgImg;
 var numOfImages = 30;
-
+var randomNumber;
 //////////////////////////////////////////////////////////
 function preload() {
   // preload() runs once
@@ -15,12 +15,13 @@ function setup() {
   pixelDensity(1);
   createCanvas(imgs[0].width * 2, imgs[0].height);
   avgImg = createGraphics(imgs[0].width, imgs[0].height);
+  randomNumber = 0;
 }
 //////////////////////////////////////////////////////////
 function draw() {
   background(125);
 
-  image(imgs[0], 0, 0);
+  image(imgs[randomNumber], 0, 0);
 
   avgImg.loadPixels();
   imgs.forEach((img) => img.loadPixels());
@@ -40,7 +41,11 @@ function draw() {
     }
   }
   avgImg.updatePixels();
-  console.log(avgImg.pixels);
   image(avgImg, imgs[0].width, 0);
   noLoop();
+}
+
+function keyPressed() {
+  randomNumber = round(random(0, 29));
+  loop();
 }
