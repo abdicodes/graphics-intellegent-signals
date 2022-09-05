@@ -16,6 +16,7 @@ function setup() {
 
   thresholdSlider = createSlider(0, 255, 50);
   thresholdSlider.position(20, 20);
+  grid = new Grid(640, 480);
 }
 
 function draw() {
@@ -77,12 +78,28 @@ function draw() {
       }
     }
   }
+  prevImg = createImage(currImg.width, currImg.height);
+  prevImg.copy(
+    currImg,
+    0,
+    0,
+    currImg.width,
+    currImg.height,
+    0,
+    0,
+    currImg.width,
+    currImg.height
+  );
+  currImg.resize(currImg.width / 4, currImg.height / 4);
   diffImg.updatePixels();
   image(diffImg, 640, 0);
+
+  diffImg.resize(diffImg.width / 4, diffImg.height / 4);
 
   noFill();
   stroke(255);
   text(threshold, 160, 35);
+  grid.run(diffImg);
 }
 
 function keyPressed() {
