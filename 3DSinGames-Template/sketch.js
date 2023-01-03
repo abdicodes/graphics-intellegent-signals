@@ -12,8 +12,6 @@ function setup() {
     confLocs.push(vec3d);
     confTheta.push(random(0, 360));
   }
-  console.log(confLocs);
-  console.log(confTheta);
 }
 
 function draw() {
