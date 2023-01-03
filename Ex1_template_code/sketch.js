@@ -14,7 +14,7 @@ var lp_cutOffSlider;
 var lp_resonanceSlider;
 var lp_dryWetSlider;
 var lp_outputSlider;
-let lowPass_filter;
+let lp;
 
 // dynamic compressor
 var dc_attackSlider;
@@ -35,16 +35,19 @@ var rv_decaySlider;
 var rv_dryWetSlider;
 var rv_outputSlider;
 var rv_reverseButton;
+let rv;
+let rv_isReverse = false;
 
 // waveshaper distortion
 var wd_amountSlider;
 var wd_oversampleSlider;
 var wd_dryWetSlider;
 var wd_outputSlider;
+let wd;
 
 let myAudio;
 function preload() {
-  myAudio = loadSound('drums.wav');
+  myAudio = loadSound('twoLines.wav');
 }
 
 function setup() {
@@ -58,14 +61,14 @@ function setup() {
 
 function draw() {
   // console.log(lp_resonanceSlider.value());
-  lowPass_filter.freq(lp_cutOffSlider.value());
-  lowPass_filter.amp(lp_outputSlider.value());
-  lowPass_filter.drywet(lp_dryWetSlider.value());
-  lowPass_filter.res(lp_resonanceSlider.value());
+  lp.freq(lp_cutOffSlider.value());
+  lp.amp(lp_outputSlider.value());
+  lp.drywet(lp_dryWetSlider.value());
+  lp.res(lp_resonanceSlider.value());
 
-  distortion.amp(lp_outputSlider.value());
-  distortion.drywet(lp_dryWetSlider.value());
-  distortion.set(wd_amountSlider.value(), oversampleParsing());
+  wd.amp(wd_outputSlider.value());
+  wd.drywet(wd_dryWetSlider.value());
+  wd.set(wd_amountSlider.value(), oversampleParsing());
 
   dc.amp(dc_outputSlider.value());
   dc.drywet(dc_dryWetSlider.value());
@@ -76,26 +79,26 @@ function draw() {
     dc_thresholdSlider.value(),
     dc_releaseSlider.value()
   );
-
+  // rv_reverseButton.mousePressed(() => (isReverse = !isReverse));
+  rv.amp(rv_outputSlider.value());
+  rv.drywet(rv_dryWetSlider.value());
   myAudio.setVolume(mv_volumeSlider.value());
+  console.log(rv_isReverse);
 }
 
 function audio_configuration() {
-  lowPass_filter = new p5.Filter('lowpass');
-  distortion = new p5.Distortion(wd_amountSlider.value(), oversampleParsing());
+  lp = new p5.Filter('lowpass');
+  wd = new p5.Distortion(wd_amountSlider.value(), oversampleParsing());
   dc = new p5.Compressor();
-  dc.set(
-    dc_attackSlider.value(),
-    dc_kneeSlider.value(),
-    dc_ratioSlider.value(),
-    dc_thresholdSlider.value(),
-    dc_releaseSlider.value()
-  );
+
+  rv = new p5.Reverb();
 
   myAudio.disconnect();
-  myAudio.connect(lowPass_filter);
-  myAudio.connect(distortion);
+  myAudio.connect(lp);
+  myAudio.connect(wd);
   myAudio.connect(dc);
+  myAudio.connect(rv);
+
   myAudio.loop();
   myAudio.setVolume(0.5);
 }
@@ -106,6 +109,9 @@ function oversampleParsing() {
   else if (x === 1) return '2x';
   else if (x === 2) return '4x';
   else throw Error('invalid oversample value');
+}
+function setReverbValues() {
+  rv.set(rv_durationSlider.value(), rv_decaySlider.value(), rv_isReverse);
 }
 function gui_configuration() {
   // Playback controls
@@ -185,11 +191,15 @@ function gui_configuration() {
   textSize(14);
   text('reverb', 10, 305);
   textSize(10);
-  rv_durationSlider = createSlider(0, 1, 0.5, 0.01);
+  rv_durationSlider = createSlider(0, 10, 3, 0.01);
   rv_durationSlider.position(10, 335);
+  rv_durationSlider.mouseReleased(setReverbValues);
+
   text('duration', 10, 330);
-  rv_decaySlider = createSlider(0, 1, 0.5, 0.01);
+  rv_decaySlider = createSlider(0, 100, 2, 0.01);
   rv_decaySlider.position(10, 380);
+  rv_decaySlider.mouseReleased(setReverbValues);
+
   text('decay', 10, 375);
   rv_dryWetSlider = createSlider(0, 1, 0.5, 0.01);
   rv_dryWetSlider.position(10, 425);
@@ -199,6 +209,7 @@ function gui_configuration() {
   text('output level', 10, 465);
   rv_reverseButton = createButton('reverb reverse');
   rv_reverseButton.position(10, 510);
+  rv_reverseButton.mousePressed(() => (rv_isReverse = !rv_isReverse));
 
   // waveshaper distortion
   textSize(14);
