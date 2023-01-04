@@ -1,5 +1,6 @@
 // Exercise 1 template
 // Feel freee to modify it or create your own template
+
 // playback controls
 var pauseButton;
 var playButton;
@@ -44,13 +45,14 @@ var wd_oversampleSlider;
 var wd_dryWetSlider;
 var wd_outputSlider;
 let wd;
-
 let fftIn, fftOut, fftIn_x, fftIn_y, fftOut_x, fftOut_y;
+let mic, recorder, recordedSound, preRecordedSound;
 
 let myAudio;
 function preload() {
   myAudio = loadSound('twoLines.wav');
-  original_audio = loadSound('twoLines.wav');
+
+  recordedSound = new p5.SoundFile();
 }
 
 function setup() {
@@ -60,13 +62,15 @@ function setup() {
   spectrum_configration();
   fftIn_x = fftOut_x = 560;
   fftIn_y = 350;
-  fftOut_y = 550;
+  fftOut_y = 600;
+  mic = new p5.AudioIn();
+  mic.start();
+  recorder = new p5.SoundRecorder(mic);
 
-  playButton.mousePressed(audio_configuration);
+  recorder.setInput(mic);
 }
 
 function draw() {
-  // console.log(lp_resonanceSlider.value());
   background(180);
   createText();
   lp.freq(lp_cutOffSlider.value());
@@ -87,23 +91,21 @@ function draw() {
     dc_thresholdSlider.value(),
     dc_releaseSlider.value()
   );
-  // rv_reverseButton.mousePressed(() => (isReverse = !isReverse));
   rv.amp(rv_outputSlider.value());
   rv.drywet(rv_dryWetSlider.value());
   myAudio.setVolume(mv_volumeSlider.value());
 
   let spectrumIn = fftIn.analyze();
   let spectrumOut = fftOut.analyze();
-  // console.log(spectrumOut);
 
   for (let i = 0; i < spectrumIn.length; i++) {
     let x = map(i, 0, spectrumIn.length, fftIn_x, width - 10);
-    let h = -fftIn_y + map(spectrumIn[i], 0, 255, fftIn_y, 200);
+    let h = -fftIn_y + map(spectrumIn[i], 0, 255, fftIn_y, 150);
     rect(x, fftIn_y, (width - fftIn_x) / spectrumIn.length, h);
   }
   for (let i = 0; i < spectrumOut.length; i++) {
     let x = map(i, 0, spectrumOut.length, fftOut_x, width - 10);
-    let h = -fftOut_y + map(spectrumOut[i], 0, 255, fftOut_y, 200);
+    let h = -fftOut_y + map(spectrumOut[i], 0, 255, fftOut_y, 400);
     rect(x, fftOut_y, (width - fftOut_x) / spectrumOut.length, h);
   }
 }
@@ -114,17 +116,10 @@ function audio_configuration() {
   dc = new p5.Compressor();
   rv = new p5.Reverb();
   myAudio.disconnect();
-  // myAudio.connect(lp);
-  // myAudio.connect(wd);
-  // myAudio.connect(dc);
-  // myAudio.connect(rv);
   myAudio.connect(lp);
   lp.connect(wd);
   wd.connect(dc);
   dc.connect(rv);
-
-  myAudio.loop();
-
   myAudio.setVolume(0.5);
 }
 
@@ -146,6 +141,10 @@ function oversampleParsing() {
 function setReverbValues() {
   rv.set(rv_durationSlider.value(), rv_decaySlider.value(), rv_isReverse);
 }
+function skipTo(pos) {
+  myAudio.jump(pos);
+}
+
 function createText() {
   textSize(14);
   text('low-pass filter', 10, 80);
@@ -189,8 +188,8 @@ function createText() {
 
   // spectrums
   textSize(14);
-  text('spectrum in', 560, 200);
-  text('spectrum out', 560, 355);
+  text('spectrum in', 560, 150);
+  text('spectrum out', 560, 370);
 }
 function gui_configuration() {
   // Playback controls
@@ -198,10 +197,12 @@ function gui_configuration() {
   pauseButton.position(10, 20);
   playButton = createButton('play');
   playButton.position(70, 20);
+
   stopButton = createButton('stop');
   stopButton.position(120, 20);
   skipStartButton = createButton('skip to start');
   skipStartButton.position(170, 20);
+
   skipEndButton = createButton('skip to end');
   skipEndButton.position(263, 20);
   loopButton = createButton('loop');
@@ -271,7 +272,6 @@ function gui_configuration() {
 
   rv_reverseButton = createButton('reverb reverse');
   rv_reverseButton.position(10, 510);
-  rv_reverseButton.mousePressed(() => (rv_isReverse = !rv_isReverse));
 
   // waveshaper distortion
 
@@ -286,4 +286,45 @@ function gui_configuration() {
 
   wd_outputSlider = createSlider(0, 1, 0.5, 0.01);
   wd_outputSlider.position(210, 470);
+}
+
+function mousePressed(e) {
+  let action = e.target.innerText;
+  if (action === 'play') {
+    myAudio.play();
+    console.log('hello world');
+  }
+  if (action === 'pause') {
+    myAudio.pause();
+  }
+  if (action === 'stop') {
+    myAudio.stop();
+  }
+  if (action === 'loop') {
+    myAudio.loop();
+  }
+
+  if (action === 'reverb reverse') {
+    rv_isReverse = !rv_isReverse;
+    rv.set(rv_durationSlider.value(), rv_decaySlider.value(), rv_isReverse);
+  }
+  if (action === 'skip to end') {
+    skipTo(myAudio.duration() - 1);
+  }
+
+  if (action === 'skip to start') {
+    skipTo(0);
+  }
+  if (action === 'record') {
+    recorder.record(recordedSound);
+    e.target.innerText = 'stop recording';
+  }
+  if (action === 'stop recording') {
+    recorder.stop();
+
+    e.target.innerText = 'play recording';
+  }
+  if (action === 'play recording') {
+    recordedSound.play();
+  }
 }
