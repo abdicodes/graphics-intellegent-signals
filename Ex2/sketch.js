@@ -1,4 +1,4 @@
-var mySound, mySound2, mySound3;
+var mySound;
 var playStopButton;
 var jumpButton;
 var sliderVolume;
@@ -6,7 +6,16 @@ var sliderRate;
 var sliderPan;
 
 var fft;
-var circleSize;
+var shapeSize,
+  shapeNum,
+  shapeColour,
+  borderSize,
+  borderColour,
+  shapeOpacity,
+  borderOpacity,
+  shapeRotation,
+  backgrouColour;
+
 var rms,
   zcr,
   energy,
@@ -14,18 +23,17 @@ var rms,
   spectralFlatness,
   spectralRolloff,
   perceptualSpread,
-  perceptualSharpness;
+  perceptualSharpness,
+  spectralSlope;
+var sizes;
 
 function preload() {
   soundFormats('wav', 'mp3');
-  // mySound = loadSound('sounds/233709__x86cam__130bpm-32-beat-loop_v2');
-  mySound = loadSound('sounds/Ex2_sound1.wav');
-  mySound2 = loadSound('sounds/Ex2_sound3.wav');
-  mySound3 = loadSound('sounds/Ex2_sound3.wav');
+  mySound = loadSound('sounds/Kalte_Ohren_(_Remix_).mp3');
 }
 
 function setup() {
-  circleSize = 0;
+  sizes = [100, 130, 60, 120, 80, 100];
   if (typeof Meyda === 'undefined') {
     console.log('Meyda could not be found! Have you included it?');
   } else {
@@ -43,30 +51,26 @@ function setup() {
         'perceptualSpread',
         'perceptualSharpness',
         'spectralSlope',
-        //arrays
-        'amplitudeSpectrum',
-        'powerSpectrum',
-        'loudness',
-        'chroma',
       ],
       callback: (features) => {
         // console.log(features.rms);
-        rms = features.rms * 1000;
-        zcr = features.zcr;
-        energy = features.energy * 100;
-        spectralCentroid = features.spectralCentroid * 5;
-        spectralFlatness = features.spectralFlatness * 1000;
-        spectralRolloff = features.spectralRolloff / 100;
-        perceptualSpread = features.perceptualSpread * 100; //useless
-        perceptualSharpness = features.perceptualSharpness * 100; //useless
-        spectralSlope = features.spectralSlope; //useless
-        circleSize = spectralCentroid;
+        rms = features.rms * 100; // 0-50
+        zcr = features.zcr; // 0-mid buffer
+        energy = features.energy * 10; // 0-buffer
+        spectralCentroid = features.spectralCentroid * 5; // 0-buffer
+        spectralFlatness = features.spectralFlatness * 1000; // 0-buffer
+        spectralRolloff = features.spectralRolloff / 100; // Hz affected 80-150
+        perceptualSpread = features.perceptualSpread * 100; //avg 80~
+        perceptualSharpness = features.perceptualSharpness * 100; //avg 50-60
+        spectralSlope = features.spectralSlope * 20000000; // number of shapes
+        // console.log(zcr);
       },
     });
     analyzer.start();
   }
-  createCanvas(400, 400);
+  createCanvas(800, 600);
   background(180);
+  audioBuffer = 512;
 
   playStopButton = createButton('play');
   playStopButton.position(200, 20);
@@ -98,35 +102,16 @@ function draw() {
   mySound.rate(sliderRate.value());
   mySound.pan(sliderPan.value());
 
-  let spectrum = fft.analyze();
-
   push();
-  translate(200, 50);
-  scale(0.33, 0.2);
-  noStroke();
-  fill(60);
-  rect(0, 0, width, height);
-  fill(255, 0, 0);
-  for (let i = 0; i < spectrum.length; i++) {
-    let x = map(i, 0, spectrum.length, 0, width);
-    let h = -height + map(spectrum[i], 0, 255, height, 0);
-    rect(x, height, width / spectrum.length, h);
+
+  for (i = 0; i < round(constrain(spectralSlope, 4, 6)); i++) {
+    shapeOpacity = map(spectralRolloff, 50, 150, 0, 255);
+    shapeColour = map(energy, 0, 300, 0, 255);
+    shapeSize = sizes[i] + perceptualSharpness;
+    fill(shapeColour, i * 42, 80, shapeOpacity);
+    circle(i * sizes[i] + sizes[i], height / 2, shapeSize);
   }
   pop();
-
-  // fill(30, 30, 255, 200);
-  // let treble = fft.getEnergy('treble');
-  // let lowMid = fft.getEnergy('lowMid');
-  // let mid = fft.getEnergy('mid');
-  // let highMid = fft.getEnergy('highMid');
-  // arc(200, 275, treble, treble, 0, HALF_PI);
-  // fill(100, 55, 255, 200);
-  // arc(200, 275, lowMid, lowMid, HALF_PI, PI);
-  // fill(55, 100, 255, 200);
-  // arc(200, 275, mid, mid, PI, PI + HALF_PI);
-  // fill(130, 130, 255, 200);
-  // arc(200, 275, highMid, highMid, PI + HALF_PI, 2 * PI);
-  circle(width / 2, height / 2, circleSize);
 }
 
 function jumpSong() {
@@ -138,14 +123,10 @@ function jumpSong() {
 function playStopSound() {
   if (mySound.isPlaying()) {
     mySound.stop();
-    //mySound.pause();
     playStopButton.html('play');
     background(180);
   } else {
-    //mySound.play();
-
     mySound.loop();
-
     playStopButton.html('stop');
   }
 }
