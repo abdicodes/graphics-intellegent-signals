@@ -22,7 +22,6 @@ var rms,
   zcr,
   energy,
   spectralCentroid,
-  spectralFlatness,
   spectralRolloff,
   perceptualSpread,
   perceptualSharpness,
@@ -42,7 +41,7 @@ function setup() {
   myRec.onResult = showResult; // bind callback function to trigger when speech is recognized
   myRec.start(); // start listening
 
-  sizes = [100, 130, 60, 120, 80, 100];
+  sizes = [100, 130, 60, 120, 80, 100, 140];
   shapeNum = 4;
   shapeColour =
     borderSize =
@@ -59,13 +58,12 @@ function setup() {
     const analyzer = Meyda.createMeydaAnalyzer({
       audioContext: getAudioContext(),
       source: mySound,
-      bufferSize: 512,
+      bufferSize: 1024,
       featureExtractors: [
         'rms',
         'zcr',
         'energy',
         'spectralCentroid',
-        'spectralFlatness',
         'spectralRolloff',
         'perceptualSpread',
         'perceptualSharpness',
@@ -76,7 +74,6 @@ function setup() {
         zcr = features.zcr;
         energy = features.energy * 10;
         spectralCentroid = features.spectralCentroid * 5;
-        spectralFlatness = features.spectralFlatness * 1000;
         spectralRolloff = features.spectralRolloff / 100;
         perceptualSpread = features.perceptualSpread * 100;
         perceptualSharpness = features.perceptualSharpness * 100;
@@ -110,16 +107,16 @@ function showResult() {
     backgrouColour = 'black';
   }
   if (myRec.resultString.toLowerCase() === 'white') {
-    backgrouColour = 'white';
+    backgrouColour = 'Snow';
   }
   if (myRec.resultString.toLowerCase() === 'red') {
-    backgrouColour = 'red';
+    backgrouColour = 'Crimson';
   }
   if (myRec.resultString.toLowerCase() === 'blue') {
-    backgrouColour = 'blue';
+    backgrouColour = 'SteelBlue';
   }
   if (myRec.resultString.toLowerCase() === 'green') {
-    backgrouColour = 'green';
+    backgrouColour = 'SeaGreen';
   }
   if (myRec.resultString.toLowerCase() === 'reset') {
     backgrouColour = null;
@@ -191,7 +188,7 @@ function draw() {
     } else if (shapeMode === 'pentagon') polygon(sizes[i], 0, sizes[i], 5);
     else {
       rectMode(CENTER);
-      rect(0 + sizes[i], 0, shapeSize, shapeSize);
+      rect(100 + sizes[i], 0, shapeSize, shapeSize);
     }
 
     pop();
