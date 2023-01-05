@@ -34,6 +34,16 @@ function preload() {
 
 function setup() {
   sizes = [100, 130, 60, 120, 80, 100];
+  shapeNum = 4;
+  shapeColour =
+    borderSize =
+    borderColour =
+    shapeOpacity =
+    borderOpacity =
+    shapeRotation =
+    backgrouColour =
+      0;
+
   if (typeof Meyda === 'undefined') {
     console.log('Meyda could not be found! Have you included it?');
   } else {
@@ -53,24 +63,21 @@ function setup() {
         'spectralSlope',
       ],
       callback: (features) => {
-        // console.log(features.rms);
-        rms = features.rms * 100; // 0-50
-        zcr = features.zcr; // 0-mid buffer
-        energy = features.energy * 10; // 0-buffer
-        spectralCentroid = features.spectralCentroid * 5; // 0-buffer
-        spectralFlatness = features.spectralFlatness * 1000; // 0-buffer
-        spectralRolloff = features.spectralRolloff / 100; // Hz affected 80-150
-        perceptualSpread = features.perceptualSpread * 100; //avg 80~
-        perceptualSharpness = features.perceptualSharpness * 100; //avg 50-60
-        spectralSlope = features.spectralSlope * 20000000; // number of shapes
-        // console.log(zcr);
+        rms = features.rms * 100;
+        zcr = features.zcr;
+        energy = features.energy * 10;
+        spectralCentroid = features.spectralCentroid * 5;
+        spectralFlatness = features.spectralFlatness * 1000;
+        spectralRolloff = features.spectralRolloff / 100;
+        perceptualSpread = features.perceptualSpread * 100;
+        perceptualSharpness = features.perceptualSharpness * 100;
+        spectralSlope = features.spectralSlope * 20000000;
       },
     });
     analyzer.start();
   }
   createCanvas(800, 600);
   background(180);
-  audioBuffer = 512;
 
   playStopButton = createButton('play');
   playStopButton.position(200, 20);
@@ -90,7 +97,10 @@ function setup() {
 }
 
 function draw() {
-  background(180, 100);
+  if (perceptualSharpness) {
+    backgrouColour = map(perceptualSharpness, 50, 70, 120, 200);
+    background(backgrouColour, 100, 100);
+  }
 
   fill(0);
   text('volume', 80, 20);
@@ -103,13 +113,30 @@ function draw() {
   mySound.pan(sliderPan.value());
 
   push();
+  if (spectralSlope) shapeNum = round(constrain(spectralSlope, 4, 6));
+  for (i = 0; i < shapeNum; i++) {
+    if (spectralRolloff) shapeOpacity = map(spectralRolloff, 50, 150, 0, 255);
+    if (energy) shapeColour = map(energy, 0, 300, 0, 255);
 
-  for (i = 0; i < round(constrain(spectralSlope, 4, 6)); i++) {
-    shapeOpacity = map(spectralRolloff, 50, 150, 0, 255);
-    shapeColour = map(energy, 0, 300, 0, 255);
-    shapeSize = sizes[i] + perceptualSharpness;
+    shapeSize = sizes[i] + rms;
+    if (perceptualSharpness) {
+      borderSize = map(perceptualSharpness, 55, 75, 1, 5);
+    }
+    if (zcr) borderColour = map(zcr, 0, 150, 0, 255);
+    if (perceptualSpread) borderOpacity = map(perceptualSpread, 80, 90, 0, 255);
+    if (spectralCentroid)
+      shapeRotation = map(spectralCentroid, 0, 512, -PI / 8, PI / 2);
+    strokeWeight(borderSize);
+    stroke(borderColour, borderColour, i * 42, 80, borderOpacity);
     fill(shapeColour, i * 42, 80, shapeOpacity);
-    circle(i * sizes[i] + sizes[i], height / 2, shapeSize);
+    push();
+    translate(i * sizes[i], height / 2);
+    rotate(shapeRotation);
+    // circle(i * sizes[i] + sizes[i], height / 2, shapeSize);
+    rectMode(CENTER);
+    rect(0 + sizes[i], 0, shapeSize, shapeSize);
+
+    pop();
   }
   pop();
 }
