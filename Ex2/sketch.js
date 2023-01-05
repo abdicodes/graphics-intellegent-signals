@@ -130,6 +130,15 @@ function showResult() {
   if (myRec.resultString.toLowerCase() === 'circle') {
     shapeMode = 'circle';
   }
+  if (myRec.resultString.toLowerCase() === 'triangle') {
+    shapeMode = 'triangle';
+  }
+  if (myRec.resultString.toLowerCase() === 'pentagon') {
+    shapeMode = 'pentagon';
+  }
+  if (myRec.resultString.toLowerCase() === 'square') {
+    shapeMode = 'square';
+  }
 }
 
 function draw() {
@@ -169,9 +178,21 @@ function draw() {
     push();
     translate(i * sizes[i], height / 2);
     rotate(shapeRotation);
-    // circle(i * sizes[i] + sizes[i], height / 2, shapeSize);
-    rectMode(CENTER);
-    rect(0 + sizes[i], 0, shapeSize, shapeSize);
+    if (shapeMode === 'circle') circle(0 + sizes[i], 0, shapeSize);
+    else if (shapeMode === 'triangle') {
+      triangle(
+        sizes[i],
+        0,
+        +sizes[i] + sizes[i],
+        0,
+        sizes[i] + sizes[i] / 2,
+        -sizes[i] / 2
+      );
+    } else if (shapeMode === 'pentagon') polygon(sizes[i], 0, sizes[i], 5);
+    else {
+      rectMode(CENTER);
+      rect(0 + sizes[i], 0, shapeSize, shapeSize);
+    }
 
     pop();
   }
@@ -193,4 +214,17 @@ function playStopSound() {
     mySound.loop();
     playStopButton.html('stop');
   }
+}
+
+//helper function not my own work! taken from https://p5js.org/examples/form-regular-polygon.html
+//in order to draw a Pentagon
+function polygon(x, y, radius, npoints) {
+  let angle = TWO_PI / npoints;
+  beginShape();
+  for (let a = 0; a < TWO_PI; a += angle) {
+    let sx = x + cos(a) * radius;
+    let sy = y + sin(a) * radius;
+    vertex(sx, sy);
+  }
+  endShape(CLOSE);
 }
