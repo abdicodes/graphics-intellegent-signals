@@ -1,4 +1,4 @@
-var mySound;
+var mySound, mySound2, mySound3;
 var playStopButton;
 var jumpButton;
 var sliderVolume;
@@ -6,14 +6,65 @@ var sliderRate;
 var sliderPan;
 
 var fft;
+var circleSize;
+var rms,
+  zcr,
+  energy,
+  spectralCentroid,
+  spectralFlatness,
+  spectralRolloff,
+  perceptualSpread,
+  perceptualSharpness;
 
 function preload() {
   soundFormats('wav', 'mp3');
   // mySound = loadSound('sounds/233709__x86cam__130bpm-32-beat-loop_v2');
-  mySound = loadSound('sounds/Ex2_sound3.wav');
+  mySound = loadSound('sounds/Ex2_sound1.wav');
+  mySound2 = loadSound('sounds/Ex2_sound3.wav');
+  mySound3 = loadSound('sounds/Ex2_sound3.wav');
 }
 
 function setup() {
+  circleSize = 0;
+  if (typeof Meyda === 'undefined') {
+    console.log('Meyda could not be found! Have you included it?');
+  } else {
+    const analyzer = Meyda.createMeydaAnalyzer({
+      audioContext: getAudioContext(),
+      source: mySound,
+      bufferSize: 512,
+      featureExtractors: [
+        'rms',
+        'zcr',
+        'energy',
+        'spectralCentroid',
+        'spectralFlatness',
+        'spectralRolloff',
+        'perceptualSpread',
+        'perceptualSharpness',
+        'spectralSlope',
+        //arrays
+        'amplitudeSpectrum',
+        'powerSpectrum',
+        'loudness',
+        'chroma',
+      ],
+      callback: (features) => {
+        // console.log(features.rms);
+        rms = features.rms * 1000;
+        zcr = features.zcr;
+        energy = features.energy * 100;
+        spectralCentroid = features.spectralCentroid * 5;
+        spectralFlatness = features.spectralFlatness * 1000;
+        spectralRolloff = features.spectralRolloff / 100;
+        perceptualSpread = features.perceptualSpread * 100; //useless
+        perceptualSharpness = features.perceptualSharpness * 100; //useless
+        spectralSlope = features.spectralSlope; //useless
+        circleSize = spectralCentroid;
+      },
+    });
+    analyzer.start();
+  }
   createCanvas(400, 400);
   background(180);
 
@@ -63,18 +114,19 @@ function draw() {
   }
   pop();
 
-  fill(30, 30, 255, 200);
-  let treble = fft.getEnergy('treble');
-  let lowMid = fft.getEnergy('lowMid');
-  let mid = fft.getEnergy('mid');
-  let highMid = fft.getEnergy('highMid');
-  arc(200, 275, treble, treble, 0, HALF_PI);
-  fill(100, 55, 255, 200);
-  arc(200, 275, lowMid, lowMid, HALF_PI, PI);
-  fill(55, 100, 255, 200);
-  arc(200, 275, mid, mid, PI, PI + HALF_PI);
-  fill(130, 130, 255, 200);
-  arc(200, 275, highMid, highMid, PI + HALF_PI, 2 * PI);
+  // fill(30, 30, 255, 200);
+  // let treble = fft.getEnergy('treble');
+  // let lowMid = fft.getEnergy('lowMid');
+  // let mid = fft.getEnergy('mid');
+  // let highMid = fft.getEnergy('highMid');
+  // arc(200, 275, treble, treble, 0, HALF_PI);
+  // fill(100, 55, 255, 200);
+  // arc(200, 275, lowMid, lowMid, HALF_PI, PI);
+  // fill(55, 100, 255, 200);
+  // arc(200, 275, mid, mid, PI, PI + HALF_PI);
+  // fill(130, 130, 255, 200);
+  // arc(200, 275, highMid, highMid, PI + HALF_PI, 2 * PI);
+  circle(width / 2, height / 2, circleSize);
 }
 
 function jumpSong() {
@@ -91,7 +143,9 @@ function playStopSound() {
     background(180);
   } else {
     //mySound.play();
+
     mySound.loop();
+
     playStopButton.html('stop');
   }
 }
