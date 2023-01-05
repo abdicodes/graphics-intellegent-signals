@@ -7,6 +7,7 @@ var sliderPan;
 
 var fft;
 var shapeSize,
+  shapeMode,
   shapeNum,
   shapeColour,
   borderSize,
@@ -105,20 +106,29 @@ function setup() {
 }
 function showResult() {
   console.log(myRec.resultString);
-  if (myRec.resultString === 'black') {
+  if (myRec.resultString.toLowerCase() === 'black') {
     backgrouColour = 'black';
   }
-  if (myRec.resultString === 'white') {
+  if (myRec.resultString.toLowerCase() === 'white') {
     backgrouColour = 'white';
   }
-  if (myRec.resultString === 'red') {
+  if (myRec.resultString.toLowerCase() === 'red') {
     backgrouColour = 'red';
   }
-  if (myRec.resultString === 'blue') {
+  if (myRec.resultString.toLowerCase() === 'blue') {
     backgrouColour = 'blue';
   }
-  if (myRec.resultString === 'green') {
+  if (myRec.resultString.toLowerCase() === 'green') {
     backgrouColour = 'green';
+  }
+  if (myRec.resultString.toLowerCase() === 'reset') {
+    backgrouColour = null;
+  }
+  if (myRec.resultString.toLowerCase() === 'triangle') {
+    shapeMode = 'triangle';
+  }
+  if (myRec.resultString.toLowerCase() === 'circle') {
+    shapeMode = 'circle';
   }
 }
 
