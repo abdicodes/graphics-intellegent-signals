@@ -14,6 +14,7 @@ var shapeSize,
   shapeOpacity,
   borderOpacity,
   shapeRotation,
+  backgrouColourFeature,
   backgrouColour;
 
 var rms,
@@ -26,6 +27,7 @@ var rms,
   perceptualSharpness,
   spectralSlope;
 var sizes;
+var myRec;
 
 function preload() {
   soundFormats('wav', 'mp3');
@@ -33,6 +35,12 @@ function preload() {
 }
 
 function setup() {
+  myRec = new p5.SpeechRec('en-US'); // speech recognition object (will prompt for mic access)
+  myRec.continuous = true;
+
+  myRec.onResult = showResult; // bind callback function to trigger when speech is recognized
+  myRec.start(); // start listening
+
   sizes = [100, 130, 60, 120, 80, 100];
   shapeNum = 4;
   shapeColour =
@@ -41,7 +49,7 @@ function setup() {
     shapeOpacity =
     borderOpacity =
     shapeRotation =
-    backgrouColour =
+    backgrouColourFeature =
       0;
 
   if (typeof Meyda === 'undefined') {
@@ -95,12 +103,31 @@ function setup() {
 
   fft = new p5.FFT(0.2, 2048);
 }
+function showResult() {
+  console.log(myRec.resultString);
+  if (myRec.resultString === 'black') {
+    backgrouColour = 'black';
+  }
+  if (myRec.resultString === 'white') {
+    backgrouColour = 'white';
+  }
+  if (myRec.resultString === 'red') {
+    backgrouColour = 'red';
+  }
+  if (myRec.resultString === 'blue') {
+    backgrouColour = 'blue';
+  }
+  if (myRec.resultString === 'green') {
+    backgrouColour = 'green';
+  }
+}
 
 function draw() {
-  if (perceptualSharpness) {
-    backgrouColour = map(perceptualSharpness, 50, 70, 120, 200);
-    background(backgrouColour, 100, 100);
+  if (perceptualSharpness && !backgrouColour) {
+    backgrouColourFeature = map(perceptualSharpness, 50, 70, 120, 200);
+    background(backgrouColourFeature, 100, 100);
   }
+  if (backgrouColour) background(backgrouColour);
 
   fill(0);
   text('volume', 80, 20);
